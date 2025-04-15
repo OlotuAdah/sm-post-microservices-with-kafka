@@ -1,0 +1,10 @@
+{
+  "editor.dropIntoEditor.preferences": [],
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "csharp.format.enable": true,
+  "omnisharp.enableEditorConfigSupport": true,
+  "omnisharp.useModernNet": true,
+  "omnisharp.enableMsBuildLoadProjectsOnDemand": true
+}
