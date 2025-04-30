@@ -23,7 +23,7 @@ public class CommandHandler(IEventSourcingHandler<PostAggregate> eventSourcingHa
     public async Task HandleAsync(RemoveCommentCommand command)
     {
         var aggregate = await _eventSourcingHandler.GetByIdAsync(command.Id);
-        aggregate.RemoveComment(command.Id, command.Username);
+        aggregate.RemoveComment(command.CommentId, command.Username);
         await _eventSourcingHandler.SaveAsync(aggregate);
     }
 
@@ -44,7 +44,7 @@ public class CommandHandler(IEventSourcingHandler<PostAggregate> eventSourcingHa
     public async Task HandleAsync(EditCommentCommand command)
     {
         var aggregate = await _eventSourcingHandler.GetByIdAsync(command.Id);
-        aggregate.EditComment(command.Id, command.Comment, command.Username);
+        aggregate.EditComment(command.CommentId, command.Comment, command.Username);
         await _eventSourcingHandler.SaveAsync(aggregate);
     }
 

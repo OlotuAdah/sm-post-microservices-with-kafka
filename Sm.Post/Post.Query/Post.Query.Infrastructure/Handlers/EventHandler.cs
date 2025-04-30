@@ -1,23 +1,34 @@
+using Amazon.Runtime.Internal.Util;
+using Microsoft.Extensions.Logging;
 using Post.Common.Events;
 using Post.Query.Domain.Entities;
 using Post.Query.Domain.Interfaces.Repositories;
 
 namespace Post.Query.Infrastructure.Handlers;
-public class EventHandler(IPostRepo postRepo, ICommentRepo commentRepo) : IEventHandler
+public class EventHandler(IPostRepo postRepo, ICommentRepo commentRepo, ILogger<EventHandler> logger) : IEventHandler
 {
     private readonly IPostRepo _postRepo = postRepo;
     private readonly ICommentRepo _commentRepo = commentRepo;
+    private readonly ILogger<EventHandler> _logger = logger;
 
     public async Task On(PostCreatedEvent @event)
     {
-        var post = new PostEntity
+        try
         {
-            PostId = @event.Id,
-            Author = @event.Author,
-            DatePosted = @event.DatePosted,
-            Message = @event.Message
-        };
-        await _postRepo.CreateAsync(post).ConfigureAwait(false);
+            var post = new PostEntity
+            {
+                PostId = @event.Id,
+                Author = @event.Author,
+                DatePosted = @event.DatePosted,
+                Message = @event.Message
+            };
+            await _postRepo.CreateAsync(post);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while handling PostCreatedEvent");
+            throw;
+        }
     }
 
     public async Task On(MessageUpdatedEvent @event)

@@ -41,23 +41,20 @@ public abstract class AggregateRoot
 
     protected void RaiseEvent(BaseEvent @event)
     {
-        //new gets added to list of uncommitted changes
-        //method is invoked on the aggregate
-        //Version is incremented
-        // Version++;
-        var isNewEvent = true; // we are raising an even, then it's a new event.
-        ApplyChange(@event, isNewEvent);
+        @event.Version = Version;
+        ApplyChange(@event, true); // Apply the event to the aggregate and mark it as new.
     }
 
     public void ReplayEvents(IEnumerable<BaseEvent> events)
     {
-        //Doesn't add events to the list of uncommitted changes.
-        //Method is invoked on the aggregate.
-        //Version is incremented.
-        // Version++;
         foreach (var @event in events)
         {
             ApplyChange(@event, false); // not a new event.
+        }
+        // Set the aggregate version to the last event's version
+        if (events?.Any() == true)
+        {
+            Version = events.Max(e => e.Version);
         }
     }
 

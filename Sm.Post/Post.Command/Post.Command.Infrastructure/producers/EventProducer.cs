@@ -1,14 +1,17 @@
 using System.Text.Json;
+using Amazon.Runtime.Internal.Util;
 using Confluent.Kafka;
 using CQRS.Core.Events;
 using CQRS.Core.producers;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Polly;
 
 namespace Post.Command.Infrastructure.producers;
-public class EventProducer(IOptions<ProducerConfig> producerConfig) : IEventProducer
+public class EventProducer(IOptions<ProducerConfig> producerConfig, ILogger<EventProducer> logger) : IEventProducer
 {
     private readonly ProducerConfig _producerConfig = producerConfig.Value;
+    private readonly ILogger<EventProducer> _logger = logger;
 
     public async Task ProduceAsync<T>(string topic, T @event) where T : BaseEvent
     {
@@ -23,13 +26,14 @@ public class EventProducer(IOptions<ProducerConfig> producerConfig) : IEventProd
             Key = Guid.NewGuid().ToString(),
             Value = JsonSerializer.Serialize(@event, @event.GetType())
         };
-
+        _logger.LogInformation("Producing message to topic {topic} with value {value}", topic, eventMessage.Value);
+        // ProduceAsync is an async method that sends the message to the topic and returns a DeliveryResult object
         var deliveryResult = await producer.ProduceAsync(topic, eventMessage);
         if (deliveryResult.Status != PersistenceStatus.Persisted)
         {
             throw new Exception($"Could not produce ${@event.GetType().Name} message to topic ${topic} due to the following error: '{deliveryResult.Message.Value}' ");
         }
-        Console.WriteLine($"Message {deliveryResult.Message.Value} sent to topic {topic}");
+        _logger.LogInformation($"Message {deliveryResult.Message.Value} sent to topic {topic}");
     }
 
     public async Task ProduceWithRetryAsync<T>(string topic, T @event) where T : BaseEvent

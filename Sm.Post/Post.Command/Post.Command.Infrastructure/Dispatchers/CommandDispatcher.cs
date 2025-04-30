@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amazon.Runtime.Internal.Util;
 using CQRS.Core.Commands;
 using CQRS.Core.Infrastructure;
 using Microsoft.Extensions.Logging;
@@ -45,9 +40,7 @@ public class CommandDispatcher() : ICommandDispatcher
         catch (Exception ex)
         {
             _logger.LogError($"Error while trying to dispatch command {command.GetType().Name}");
-            _logger.LogError(ex.Message, ex);
-            _logger.LogError(ex.StackTrace);
-            // You can also log the exception or handle it in a way that suits your application.
+            _logger.LogError(ex.Message);
             throw;
         }
     }

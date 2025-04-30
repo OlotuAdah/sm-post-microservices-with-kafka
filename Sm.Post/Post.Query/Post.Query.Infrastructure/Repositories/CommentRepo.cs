@@ -7,11 +7,11 @@ namespace Post.Query.Infrastructure.Repositories;
 public class CommentRepo(ReadDatabaseContextFactory readDatabaseContextFactory) : ICommentRepo
 {
     private readonly ReadDatabaseContextFactory _readDatabaseContextFactory = readDatabaseContextFactory;
-    public Task CreateAsync(CommentEntity comment)
+    public async Task CreateAsync(CommentEntity comment)
     {
         using var context = _readDatabaseContextFactory.CreateDbContext();
         context.Comments.Add(comment);
-        return context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public Task DeleteAsync(Guid commentId)
@@ -36,10 +36,10 @@ public class CommentRepo(ReadDatabaseContextFactory readDatabaseContextFactory) 
 
     }
 
-    public Task UpdateAsync(CommentEntity comment)
+    public async Task UpdateAsync(CommentEntity comment)
     {
         using var context = _readDatabaseContextFactory.CreateDbContext();
         context.Comments.Update(comment);
-        return context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 }

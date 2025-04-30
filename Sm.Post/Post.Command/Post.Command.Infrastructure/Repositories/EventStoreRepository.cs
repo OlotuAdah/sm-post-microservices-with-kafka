@@ -22,9 +22,11 @@ public class EventStoreRepository : IEventStoreRepository
 
     public async Task<List<EventModel>> FindByAggregateIdAsync(Guid aggregateId)
     {
-        return await (await _eventStoreCollection.FindAsync(e => e.AggregateIdentifier == aggregateId)).ToListAsync().ConfigureAwait(false);
-        //NB: configureAwait(false) improves performance by forcing the continuation to run on the same thread as the calling method.
-        //Without it, the continuation will be scheduled on a different thread, which can lead to performance issues and avoiding deadlocks!
+        var filter = Builders<EventModel>.Filter.Eq(e => e.AggregateIdentifier, aggregateId);
+        var eventStoreCollection = await _eventStoreCollection.FindAsync(filter);
+        var events = await eventStoreCollection.ToListAsync().ConfigureAwait(false);
+        return events;
+
 
     }
 

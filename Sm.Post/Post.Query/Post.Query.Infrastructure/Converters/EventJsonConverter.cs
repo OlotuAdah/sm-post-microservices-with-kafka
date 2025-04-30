@@ -34,6 +34,7 @@ public class EventJsonConverter : JsonConverter<BaseEvent>
             nameof(PostRemovedEvent) => JsonSerializer.Deserialize<PostRemovedEvent>(json, options),
             nameof(CommentAddedEvent) => JsonSerializer.Deserialize<CommentAddedEvent>(json, options),
             nameof(CommentRemovedEvent) => JsonSerializer.Deserialize<CommentRemovedEvent>(json, options),
+            nameof(CommentUpdatedEvent) => JsonSerializer.Deserialize<CommentUpdatedEvent>(json, options),
             _ => throw new JsonException($"{typeDiscriminator} is not supported by the {nameof(EventJsonConverter)} yet")
         };
 

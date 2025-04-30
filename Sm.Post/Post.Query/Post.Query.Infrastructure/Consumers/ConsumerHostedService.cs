@@ -2,22 +2,24 @@ using CQRS.Core.Consumers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Post.Common.Settings;
 
 namespace Post.Query.Infrastructure.Consumers;
 
-public class ConsumerHostedService(ILogger<ConsumerHostedService> logger, IServiceProvider serviceProvider) : IHostedService
+public class ConsumerHostedService(ILogger<ConsumerHostedService> logger, IServiceProvider serviceProvider, IOptions<KafkaTopics> kafkaTopics) : IHostedService
 {
     private readonly ILogger<ConsumerHostedService> _logger = logger;
     private readonly IServiceProvider _serviceprovider = serviceProvider;
+    private readonly KafkaTopics _kafkaTopics = kafkaTopics.Value;
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Event consumer service is starting.");
         using (IServiceScope scope = _serviceprovider.CreateScope())
         {
             var eventConsumer = scope.ServiceProvider.GetRequiredService<IEventConsumer>();
-            var topic = Environment.GetEnvironmentVariable("KAFKA_TOPIC");
-            if (string.IsNullOrEmpty(topic)) throw new ArgumentNullException("KAFKA_TOPIC", "Kafka topic not found in environment variables.");
-            Task.Run(() => eventConsumer.Consume(topic), cancellationToken); // Start consuming messages from the topic
+            if (string.IsNullOrEmpty(_kafkaTopics.SmPostTopic)) throw new ArgumentNullException("KAFKA_TOPIC", "Kafka topic not found in environment variables.");
+            Task.Run(() => eventConsumer.Consume(_kafkaTopics.SmPostTopic), cancellationToken); // Start consuming messages from the topic
         }
         _logger.LogInformation("Event consumer service started.");
         return Task.CompletedTask;

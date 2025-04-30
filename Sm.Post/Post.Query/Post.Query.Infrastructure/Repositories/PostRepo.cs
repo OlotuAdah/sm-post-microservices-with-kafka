@@ -7,26 +7,28 @@ namespace Post.Query.Infrastructure.Repositories;
 public class PostRepo(ReadDatabaseContextFactory readDatabaseContextFactory) : IPostRepo
 {
     private readonly ReadDatabaseContextFactory _readDatabaseContextFactory = readDatabaseContextFactory;
-    public Task CreateAsync(PostEntity post)
+    public async Task CreateAsync(PostEntity post)
     {
         using var context = _readDatabaseContextFactory.CreateDbContext();
-        context.Posts.Add(post);
-        return context.SaveChangesAsync();
+        await context.Posts.AddAsync(post);
+        await context.SaveChangesAsync();
+
     }
 
-    public Task DeleteAsync(Guid postId)
+    public async Task DeleteAsync(Guid postId)
     {
         using var context = _readDatabaseContextFactory.CreateDbContext();
-        var post = context.Posts.Find(postId);
-        if (post == null) return Task.CompletedTask;
+        var post = await context.Posts.FindAsync(postId);
+        if (post == null) return;
         context.Posts.Remove(post);
-        return context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public async Task<PostEntity> GetByIdAsync(Guid postId)
     {
         using var context = _readDatabaseContextFactory.CreateDbContext();
-        return await context.Posts.Include(x => x.Comments).FirstOrDefaultAsync(x => x.PostId == postId).ConfigureAwait(false);
+        var post = await context.Posts.Include(x => x.Comments).FirstOrDefaultAsync(x => x.PostId == postId).ConfigureAwait(false);
+        return post;
     }
 
     public async Task<List<PostEntity>> ListAllAsync()
