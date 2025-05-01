@@ -48,7 +48,7 @@ public class PostRepo(ReadDatabaseContextFactory readDatabaseContextFactory) : I
         AsNoTracking()
         .Include(p => p.Comments)
         .AsNoTracking()
-        .Where(p => p.Author.Equals(author, StringComparison.CurrentCultureIgnoreCase))
+        .Where(p => p.Author.ToLower() == author.ToLower())
         .ToListAsync()
         .ConfigureAwait(false);
     }
