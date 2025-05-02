@@ -1,7 +1,6 @@
-using Amazon.Runtime.Internal.Util;
 using Microsoft.Extensions.Logging;
+using Post.Common.Entities;
 using Post.Common.Events;
-using Post.Query.Domain.Entities;
 using Post.Query.Domain.Interfaces.Repositories;
 
 namespace Post.Query.Infrastructure.Handlers;

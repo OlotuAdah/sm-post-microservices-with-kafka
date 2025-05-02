@@ -1,13 +1,13 @@
 using CQRS.Core.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Post.Common.Entities;
 using Post.Query.Api.Queries;
-using Post.Query.Domain.Entities;
 
 namespace Post.Query.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/post-lookup/posts")]
-public class PostLookupController(ILogger<PostLookupController> logger, IQueryDispatcher<PostEntity> queryDispatcher) : BaseAPIContronller(logger)
+public class PostLookupController(ILogger<PostLookupController> logger, IQueryDispatcher<PostEntity> queryDispatcher) : BaseQueryAPIContronller(logger)
 {
     private readonly IQueryDispatcher<PostEntity> _queryDispatcher = queryDispatcher;
 

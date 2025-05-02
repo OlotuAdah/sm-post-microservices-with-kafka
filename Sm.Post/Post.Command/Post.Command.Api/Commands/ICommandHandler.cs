@@ -9,4 +9,5 @@ public interface ICommandHandler
     Task HandleAsync(EditCommentCommand command);
     Task HandleAsync(DeletePostCommand command);
     Task HandleAsync(AddCommentCommand command);
+    Task HandleAsync(RestoreReadDbCommand command);
 }

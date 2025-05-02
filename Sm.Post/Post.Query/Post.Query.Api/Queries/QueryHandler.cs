@@ -1,6 +1,6 @@
 
 
-using Post.Query.Domain.Entities;
+using Post.Common.Entities;
 using Post.Query.Domain.Interfaces.Repositories;
 
 namespace Post.Query.Api.Queries;

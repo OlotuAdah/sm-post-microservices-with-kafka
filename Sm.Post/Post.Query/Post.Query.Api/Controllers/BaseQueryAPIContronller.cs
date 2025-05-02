@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Post.Common.Entities;
 using Post.Query.Api.DTO;
-using Post.Query.Domain.Entities;
 namespace Post.Query.Api.Controllers;
 
-public class BaseAPIContronller(ILogger<BaseAPIContronller> logger) : ControllerBase
+public class BaseQueryAPIContronller(ILogger<BaseQueryAPIContronller> logger) : ControllerBase
 {
-    private readonly ILogger<BaseAPIContronller> _logger = logger;
+    private readonly ILogger<BaseQueryAPIContronller> _logger = logger;
 
     protected Task<ActionResult> HandleException(Exception ex, string requestName)
     {

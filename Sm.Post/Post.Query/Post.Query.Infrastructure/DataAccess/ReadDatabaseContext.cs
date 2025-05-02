@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Post.Query.Domain.Entities;
+using Post.Common.Entities;
 
 namespace Post.Query.Infrastructure.DataAccess;
 public class ReadDatabaseContext(DbContextOptions<ReadDatabaseContext> options) : DbContext(options)

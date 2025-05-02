@@ -1,7 +1,7 @@
 
 using CQRS.Core.Infrastructure;
 using CQRS.Core.Queries;
-using Post.Query.Domain.Entities;
+using Post.Common.Entities;
 
 namespace Post.Query.Infrastructure.Dispatchers;
 

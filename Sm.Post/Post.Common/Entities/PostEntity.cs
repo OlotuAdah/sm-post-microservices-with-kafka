@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Post.Query.Domain.Entities;
+namespace Post.Common.Entities;
 
 [Table("Post")]
 public class PostEntity

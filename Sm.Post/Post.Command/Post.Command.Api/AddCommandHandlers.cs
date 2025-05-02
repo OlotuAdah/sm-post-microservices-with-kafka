@@ -14,7 +14,7 @@ public static class CommandHandlerRegistration
         services.AddScoped<ICommandDispatcher, CommandDispatcher>(sp =>
         {
             var dispatcher = new CommandDispatcher();
-            var commandHandler = sp.GetRequiredService<ICommandHandler>();
+            ICommandHandler commandHandler = sp.GetRequiredService<ICommandHandler>();
             // Register all command handlers
             dispatcher.RegisterHandler<NewPostCommand>(commandHandler.HandleAsync);
             dispatcher.RegisterHandler<EditMessageCommand>(commandHandler.HandleAsync);
@@ -23,6 +23,7 @@ public static class CommandHandlerRegistration
             dispatcher.RegisterHandler<AddCommentCommand>(commandHandler.HandleAsync);
             dispatcher.RegisterHandler<EditCommentCommand>(commandHandler.HandleAsync);
             dispatcher.RegisterHandler<RemoveCommentCommand>(commandHandler.HandleAsync);
+            dispatcher.RegisterHandler<RestoreReadDbCommand>(commandHandler.HandleAsync);
             return dispatcher;
         });
         return services;

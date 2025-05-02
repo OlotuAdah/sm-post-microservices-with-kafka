@@ -1,4 +1,4 @@
-using Post.Query.Domain.Entities;
+using Post.Common.Entities;
 
 namespace Post.Query.Domain.Interfaces.Repositories;
 public interface IPostRepo

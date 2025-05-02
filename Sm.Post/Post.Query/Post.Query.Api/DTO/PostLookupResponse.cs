@@ -1,6 +1,6 @@
 
 using Post.Common.DTO;
-using Post.Query.Domain.Entities;
+using Post.Common.Entities;
 
 namespace Post.Query.Api.DTO;
 

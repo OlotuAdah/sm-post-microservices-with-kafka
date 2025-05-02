@@ -16,6 +16,11 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
     private readonly ILogger<EventStore> _logger = logger;
     private readonly KafkaTopics _kafkaTopics = kafkaTopics.Value;
 
+    public async Task<List<Guid>> GetAggregateIdsAsync()
+    {
+        return await _eventStoreRepo.FindAllEventsAsync().ContinueWith(t => t.Result.Select(x => x.AggregateIdentifier).Distinct().ToList());
+    }
+
     public async Task<List<BaseEvent>> GetEventsAsync(Guid aggregateId)
     {
         var eventStream = await _eventStoreRepo.FindByAggregateIdAsync(aggregateId);

@@ -8,21 +8,13 @@ namespace Post.Command.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/posts")]
-public class PostController : ControllerBase
+public class PostController(
+    ICommandDispatcher commandDispatcher,
+    IMapper mapper,
+    ILogger<PostController> logger) : BaseCommandAPIContronller(logger)
 {
-    private readonly ICommandDispatcher _commandDispatcher;
-    private readonly IMapper _mapper;
-    private readonly ILogger<PostController> _logger;
-
-    public PostController(
-        ICommandDispatcher commandDispatcher,
-        IMapper mapper,
-        ILogger<PostController> logger)
-    {
-        _commandDispatcher = commandDispatcher;
-        _mapper = mapper;
-        _logger = logger;
-    }
+    private readonly ICommandDispatcher _commandDispatcher = commandDispatcher;
+    private readonly IMapper _mapper = mapper;
 
     [HttpPost("add")]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -31,20 +23,14 @@ public class PostController : ControllerBase
     {
         try
         {
-            var command = _mapper.Map<NewPostCommand>(dto);
+            NewPostCommand? command = _mapper.Map<NewPostCommand>(dto);
             await _commandDispatcher.SendAsync(command);
+            return await HandleSuccessResponse(new NewPostResponse { Message = "Post created successfully" }, StatusCodes.Status201Created);
 
-            return StatusCode(StatusCodes.Status201Created,
-                new NewPostResponse
-                {
-                    Id = command.Id,
-                    Message = "Post created successfully"
-                });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating new post");
-            return BadRequest(new { ex.Message });
+            return await HandleException(ex, nameof(NewPost));
         }
     }
 
@@ -55,16 +41,14 @@ public class PostController : ControllerBase
     {
         try
         {
-            var command = _mapper.Map<EditMessageCommand>(dto);
+            EditMessageCommand? command = _mapper.Map<EditMessageCommand>(dto);
             command.Id = id;
-
             await _commandDispatcher.SendAsync(command);
-            return Ok(new { Message = "Message updated successfully" });
+            return await HandleSuccessResponse(new NewPostResponse { Message = "Message updated successfully" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error editing message for post {PostId}", id);
-            return BadRequest(new { ex.Message });
+            return await HandleException(ex, nameof(EditMessage));
         }
     }
     [HttpPut("like")]
@@ -74,15 +58,14 @@ public class PostController : ControllerBase
     {
         try
         {
-            var command = _mapper.Map<LikePostCommand>(dto);
+            LikePostCommand? command = _mapper.Map<LikePostCommand>(dto);
             command.Id = dto.PostId;
             await _commandDispatcher.SendAsync(command);
-            return Ok(new { Message = "Like post request completed successfully" });
+            return await HandleSuccessResponse(new NewPostResponse { Message = "Like post request completed successfully" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while process like on post {PostId}", dto.PostId);
-            return BadRequest(new { ex.Message });
+            return await HandleException(ex, nameof(LikePostDto));
         }
     }
     [HttpDelete("delete")]
@@ -92,15 +75,14 @@ public class PostController : ControllerBase
     {
         try
         {
-            var command = _mapper.Map<DeletePostCommand>(dto);
+            DeletePostCommand? command = _mapper.Map<DeletePostCommand>(dto);
             command.Id = dto.PostId;
             await _commandDispatcher.SendAsync(command);
-            return Ok(new { Message = "Post deleted successfully" });
+            return await HandleSuccessResponse(new NewPostResponse { Message = "Post deleted successfully" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while process delete post request: {PostId}", dto.PostId);
-            return BadRequest(new { ex.Message });
+            return await HandleException(ex, nameof(DeletePost));
         }
     }
 
@@ -113,17 +95,15 @@ public class PostController : ControllerBase
     {
         try
         {
-            var command = _mapper.Map<AddCommentCommand>(dto);
+            AddCommentCommand? command = _mapper.Map<AddCommentCommand>(dto);
             command.Id = id;
 
             await _commandDispatcher.SendAsync(command);
-            return StatusCode(StatusCodes.Status201Created,
-                new { Message = "Comment added successfully" });
+            return await HandleSuccessResponse(new NewPostResponse { Message = "Comment added successfully" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error adding comment to post {PostId}", id);
-            return BadRequest(new { ex.Message });
+            return await HandleException(ex, nameof(AddComment));
         }
     }
     [HttpPost("{id}/comments/edit")]
@@ -135,16 +115,14 @@ public class PostController : ControllerBase
     {
         try
         {
-            var command = _mapper.Map<EditCommentCommand>(dto);
+            EditCommentCommand? command = _mapper.Map<EditCommentCommand>(dto);
             command.Id = id;
             await _commandDispatcher.SendAsync(command);
-            return StatusCode(StatusCodes.Status201Created,
-                new { Message = "Comment edited successfully" });
+            return await HandleSuccessResponse(new NewPostResponse { Message = "Comment edited successfully" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error editing comment with id ${dto.CommentId}");
-            return BadRequest(new { ex.Message });
+            return await HandleException(ex, nameof(EditComment));
         }
     }
     [HttpDelete("{id}/comments/remove")]
@@ -156,15 +134,14 @@ public class PostController : ControllerBase
     {
         try
         {
-            var command = _mapper.Map<RemoveCommentCommand>(dto);
+            RemoveCommentCommand? command = _mapper.Map<RemoveCommentCommand>(dto);
             command.Id = id;
             await _commandDispatcher.SendAsync(command);
-            return StatusCode(StatusCodes.Status201Created, new { Message = "Comment deleted successfully" });
+            return await HandleSuccessResponse(new NewPostResponse { Message = "Comment deleted successfully" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error deleting comment with id ${dto.CommentId}");
-            return BadRequest(new { ex.Message });
+            return await HandleException(ex, nameof(RemoveComment));
         }
     }
 }

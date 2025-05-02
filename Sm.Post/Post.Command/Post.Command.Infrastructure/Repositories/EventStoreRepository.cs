@@ -20,6 +20,11 @@ public class EventStoreRepository : IEventStoreRepository
 
     }
 
+    public async Task<List<EventModel>> FindAllEventsAsync()
+    {
+        return await _eventStoreCollection.Find(_ => true).ToListAsync().ConfigureAwait(false);
+    }
+
     public async Task<List<EventModel>> FindByAggregateIdAsync(Guid aggregateId)
     {
         var filter = Builders<EventModel>.Filter.Eq(e => e.AggregateIdentifier, aggregateId);
