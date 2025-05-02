@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Post.Common.Entities;
 
-[Table("Comment")]
+[Table("Comment", Schema = "dbo")]
 public class CommentEntity
 {
     [Key]
