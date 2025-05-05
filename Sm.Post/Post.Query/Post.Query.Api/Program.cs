@@ -14,12 +14,16 @@ using Post.Query.Infrastructure.Repositories;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-Action<DbContextOptionsBuilder> configureDbContext = o => o.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+var connectionString = builder.Configuration.GetConnectionString("PostgreSqlConnection")!; //PostgreSqlConnection // DefaultConnection
+// Action<DbContextOptionsBuilder> configureDbContext = o => o.UseLazyLoadingProxies().UseSqlServer(connectionString);
+Action<DbContextOptionsBuilder> configureDbContext = o => o.UseLazyLoadingProxies().UseNpgsql(connectionString);
 builder.Services.AddDbContext<ReadDatabaseContext>(configureDbContext);
 builder.Services.AddSingleton(new ReadDatabaseContextFactory(configureDbContext));
 
-//Create databse and tables from code
+// Create database and tables from code
 ReadDatabaseContext readDatabseContext = builder.Services.BuildServiceProvider().GetRequiredService<ReadDatabaseContext>();
+
+// Ensure database exists first
 readDatabseContext.Database.EnsureCreated();
 
 builder.Services.AddScoped<IPostRepo, PostRepo>();
@@ -60,7 +64,4 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-
-
 app.Run();
-

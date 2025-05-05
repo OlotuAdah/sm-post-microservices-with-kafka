@@ -9,8 +9,9 @@ public class ReadDatabaseContext(DbContextOptions<ReadDatabaseContext> options) 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<PostEntity>().ToTable("Post");
-        modelBuilder.Entity<CommentEntity>().ToTable("Comment");
+        // Explicitly set the schema to dbo for both entities
+        modelBuilder.Entity<PostEntity>().ToTable("Post", "dbo");
+        modelBuilder.Entity<CommentEntity>().ToTable("Comment", "dbo");
 
         // Configure relationships if needed
         modelBuilder.Entity<PostEntity>()
